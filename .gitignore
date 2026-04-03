@@ -31,6 +31,8 @@ cabal.config
 *.so
 *.dylib
 *.a
+*.hi
+*.o
 
 # Logs
 *.log

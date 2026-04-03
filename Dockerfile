@@ -1,33 +1,18 @@
-FROM haskell:latest
+FROM haskell:9.6.4
 
 WORKDIR /app
 
-# Install system dependencies that sqlite-simple commonly needs
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libsqlite3-dev \
     pkg-config \
  && rm -rf /var/lib/apt/lists/*
 
-# Install the same Haskell libraries already used in the repo/dev workflow
-RUN cabal update && \
-    cabal install --lib \
-      scotty wai-extra random text \
-      aeson sqlite-simple http-types warp
-
-# Copy repository contents
 COPY . .
 
-# Compile the SQLite example as the deployed service
-RUN ghc -O2 \
-    -package scotty \
-    -package wai-extra \
-    -package random \
-    -package text \
-    -package aeson \
-    -package sqlite-simple \
-    -package http-types \
-    -package warp \
-    src/05-scotty-sqlite/Main.hs \
-    -o server
+WORKDIR /app/src/05-scotty-sqlite
 
-CMD ["./server"]
+RUN cabal update && \
+    cabal build && \
+    cp "$(cabal list-bin demo05-scotty-sqlite)" /usr/local/bin/demo05-scotty-sqlite
+
+CMD ["demo05-scotty-sqlite"]
