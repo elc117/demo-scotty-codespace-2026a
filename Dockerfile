@@ -27,7 +27,7 @@ RUN ghc -O2 \
     -package sqlite-simple \
     -package http-types \
     -package warp \
-    src/04-scotty-sqlite/sqliteScotty.hs \
+    src/05-scotty-sqlite/Main.hs \
     -o server
 
 CMD ["./server"]
