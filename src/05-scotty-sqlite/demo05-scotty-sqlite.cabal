@@ -73,7 +73,6 @@ executable demo05-scotty-sqlite
         base >=4.14 && <5,
         aeson,
         http-types,
-        random,
         scotty,
         sqlite-simple,
         text,
