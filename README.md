@@ -34,6 +34,13 @@ liascript-devserver --input README.md --port 3001 --live
 
 ![A simple diagram showing a web client communicating with a web server (backend)](assets/web-client-server-780.png)
 
+<script>
+  window.goatcounter.count({
+    path: "elc117/demo-scotty-codespace-2026a",
+    title: "elc117/demo-scotty-codespace-2026a"
+  })
+</script>
+
 ## Framework Scotty
 
 - [Scotty](https://hackage.haskell.org/package/scotty) é um framework em Haskell para desenvolvimento backend de aplicações web
