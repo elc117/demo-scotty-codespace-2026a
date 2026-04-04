@@ -15,18 +15,20 @@ comment:  Material de apoio para a disciplina
 
 translation: English  translations/English.md
 
-link:     https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css
 
-script:   https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.js
+link:     https://cdn.jsdelivr.net/gh/AndreaInfUFSM/elc117-2026a@main/assets/css/custom.css
 
+script:   https://cdn.jsdelivr.net/gh/AndreaInfUFSM/elc117-2026a@main/assets/js/goatcounter-config.js
+script:   https://gc.zgo.at/count.js
 -->
 
 <!--
 nvm use v14.21.1
+npx -p @liascript/devserver liascript-devserver --test --input ./README.md
 liascript-devserver --input README.md --port 3001 --live
 -->
 
-[![LiaScript](https://raw.githubusercontent.com/LiaScript/LiaScript/master/badges/course.svg)](https://liascript.github.io/course/?https://raw.githubusercontent.com/elc117/demo-scotty-codespace-2025b/main/README.md)
+[![LiaScript](https://raw.githubusercontent.com/LiaScript/LiaScript/master/badges/course.svg)](https://liascript.github.io/course/?https://raw.githubusercontent.com/elc117/demo-scotty-codespace-2026a/main/README.md)
 
 # Web Service em Haskell
 
@@ -388,7 +390,7 @@ main = do
 - Para isso:
 
   - Faça login no GitHub
-  - Acesse https://github.com/elc117/demo-scotty-codespace-2025b
+  - Acesse https://github.com/elc117/demo-scotty-codespace-2026a
   - Clique no botão Code -> aba Codespaces -> Create codespace on main
   - Aguarde a criação... (leva algum tempo)
 
@@ -410,7 +412,7 @@ Observações:
 
   - Para manter os códigos de exemplo "minimalistas", não foi criado um arquivo de projeto (basta o arquivo .hs e as dependências acima instaladas)
 
-  - Criar um projeto é desnecessário para executar os códigos de exemplo (localmente ou Codespaces).
+  - Criar um projeto não é obrigatório para executar os códigos de exemplo (localmente ou Codespaces).
 
 
 ### Compilação e execução
