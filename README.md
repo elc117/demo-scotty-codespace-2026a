@@ -49,13 +49,13 @@ liascript-devserver --input README.md --port 3001 --live
 
 ![A diagram showing a web client communicating with a web server (backend) using Scotty](assets/web-client-server-scotty-780.png)
 
-## Exemplos
+## Exemplos mínimos
 
 Como dizia (polemicamente) Linus Torvalds (criador do Linux):
 
 ![Ascii art gerada em https://patorjk.com/software/taag/ com a frase "Talk is cheap. Show me the code", atribuída a Linus Torvalds.](assets/ascii-art-text.png)
 
-### Exemplo mínimo: hello
+### Exemplo: hello
 
 
 Arquivo: [helloScotty.hs](src/01-scotty-hello/helloScotty.hs)
@@ -83,10 +83,141 @@ main = scotty 3000 $ do
 - Importante: diretiva `{-# LANGUAGE OverloadedStrings #-}` permite trabalhar com diferentes representações de strings (como o tipo Text, usado pelo Scotty), sem chamar funções de conversão
 - Opcional: a linha `middleware logStdoutDev` é opcional e insere um "middleware" que executa antes/depois de cada requisição, neste caso registrando logs.
 
+
+
+### Exemplo: hello/name
+
+
+Arquivo: [helloNameScotty.hs](src/02-scotty-hello-name/helloNameScotty.hs)
+
+``` haskell
+{-# LANGUAGE OverloadedStrings #-}
+import Web.Scotty
+import Network.Wai.Middleware.RequestLogger (logStdoutDev)
+import qualified Data.Text.Lazy as T
+
+-- Função pura: recebe um nome e produz a mensagem
+makeGreeting :: String -> String
+makeGreeting name = "Hello, " ++ name ++ "!"
+
+main :: IO ()
+main = scotty 3000 $ do
+  middleware logStdoutDev
+
+  get "/hello/:name" $ do
+    name <- pathParam "name"
+    text (T.pack (makeGreeting name))
+```
+
+
+- Aqui a rota `hello` recebe como parâmetro um nome
+
+- O nome é passado como parâmetro para a função pura `makeGreeting`, que retorna uma `String` que é depois convertida para retorno pelo servidor
+
+
+## Ambiente de desenvolvimento
+
+### Codespaces
+
+- Todos os códigos deste repositório são executáveis no Codespaces!
+- Para isso:
+
+  - Faça login no GitHub
+  - Acesse https://github.com/elc117/demo-scotty-codespace-2026a
+  - Clique no botão Code -> aba Codespaces -> Create codespace on main
+  - Aguarde a criação... (leva algum tempo)
+
+
+### Instalação de dependências
+
+Instalação de dependências localmente ou no Codespaces, sem criação de projeto:
+
+```
+cabal update
+cabal install --lib scotty wai-extra random text
+cabal install --lib aeson sqlite-simple http-types warp
+```
+
+Observações:
+
+- No Codespaces, essas dependências podem ser adicionadas em [.devcontainer/devcontainer.json](.devcontainer/devcontainer.json), mas isso aumentaria o tempo de criação do container
+- Opcional para futuros projetos: usar a ferramenta Stack para criar um projeto que descreve as dependências
+
+  - Para manter os códigos de exemplo "minimalistas", não foi criado um arquivo de projeto (basta o arquivo .hs e as dependências acima instaladas)
+
+  - Criar um projeto não é obrigatório para executar os códigos de exemplo (localmente ou Codespaces).
+
+
+### Compilação e execução
+
+
+Execução do primeiro exemplo, como script:
+
+```
+cd src/01-scotty-hello/
+runhaskell helloScotty.hs
+```
+
+Opcional, com geração de executável:
+
+```
+ghc -threaded -o mywebapp helloScotty.hs
+./mywebapp
+```
+
+
+
+### Teste
+
+- Para testar cada exemplo, vai ser preciso fazer requisições web para as rotas 
+- Todos exemplos aceitam requisições GET (leitura), que podem ser enviadas pelo navegador na URL
+- No Codespaces, é possível expor o serviço (escolher modo Public) com uma URL externa e acessá-lo pelo computador local
+
+
+#### Codespaces
+
+- Certifique-se de que o programa com Scotty esteja rodando antes de fazer uma requisição (verifique os logs no terminal)
+
+- Para requisições GET, clique em "Open in Browser" no popup que aparece quando o programa é executado
+
+  - Opcionalmente: Clique no menu PORTS e clique na URL mostrada em Forwarded Address
+  - Depois de abrir o navegador, digite a rota no final da URL 
+
+- Para controlar melhor as requisições, use o comando `curl` no terminal (abra um segundo terminal, pois o primeiro estará dedicado a executar e mostrar os logs do servidor)
+
+- Exemplos de requisições (conforme o exemplo correspondente):
+
+  - Exemplo: Hello
+    ``` bash
+    curl http://localhost:3000/hello
+    ```
+  
+- Caso queira enviar requisições a partir do computador local, configure a visibilidade da porta para Public (PORTS -> Visibility). Isso permitirá acessar o serviço via uma URL na forma `https://<nome-gerado-pelo-github>-3000.app.github.dev/users`, como no exemplo abaixo:
+
+  ```
+   curl https://effective-journey-5vvrvjp95hp4p5-3000.app.github.dev/users
+  ```
+
+
+#### Localmente
+
+- Opção 1: Abra um navegador e copie/cole a URL: `http://localhost:3000/hello`
+
+- Opção 2: Use o programa `curl` no terminal: 
+
+  ``` bash
+  curl http://localhost:3000/hello/Andrea
+  ```
+
+
+
+
+## Mais exemplos
+
 ### Exemplo: random advice
 
 - Um serviço que fornece conselhos aleatórios 😀
-- Arquivo: [randomAdviceService.hs](src/02-scotty-random-advice/randomAdviceService.hs)
+- Arquivo: [randomAdviceService.hs](src/03-scotty-random-advice/randomAdviceService.hs)
 
 ``` haskell
 {-# LANGUAGE OverloadedStrings #-}
@@ -130,8 +261,7 @@ main = scotty 3000 $ do
 ### Exemplo: random advice (JSON)
 
 - Agora com resposta em formato JSON
-- Arquivo: [randomAdviceServiceJson.hs](src/03-scotty-random-advice-json/randomAdviceServiceJson.hs)
-
+- Arquivo: [randomAdviceServiceJson.hs](src/04-scotty-random-advice-json/randomAdviceServiceJson.hs)
 
 ``` haskell
 {-# LANGUAGE OverloadedStrings #-}
@@ -183,7 +313,7 @@ main = scotty 3000 $ do
 ### Exemplo: POI service
 
 - Exemplo que consulta um serviço de Pontos de Interesse
-- [poiService.hs](src/poiService.hs)
+- Arquivo: [poiService.hs](src/05-scotty-poi/poiService.hs)
 
 
 
@@ -280,6 +410,10 @@ main = scotty 3000 $ do
 - Se o código de cada rota se estender muito, vale movê-lo para outras funções de tipo `IO ()`, que chamam as funções mais "puras" (que não interagem com o "mundo externo").
 
 ### Exemplo: SQLite
+
+
+- Integração de Scotty a um banco SQLite, com operações de inserção, leitura, alteração e remoção.
+- Arquivo: [Main.hs](src/06-scotty-sqlite/Main.hs)
 
 ``` haskell
 {-# LANGUAGE OverloadedStrings #-}
@@ -385,117 +519,48 @@ main = do
       json ("User deleted" :: String)
 ```
 
-- Integração de Scotty a um banco SQLite, salvando e consultando dados reais.
 - Usa JSON para comunicação entre cliente e servidor, de forma automática via instâncias `ToJSON`/`FromJSON`.
 - Mais exemplos de práticas de backend: parâmetros de rota, códigos de status HTTP.
 
-## Desenvolvimento
 
-### Codespaces
+## Deploy em render.com
 
-- Todos os códigos deste repositório são executáveis no Codespaces!
-- Para isso:
+- O exemplo com banco de dados SQLite está configurado para deploy na plataforma Render (render.com)
+- Arquivos importantes
 
-  - Faça login no GitHub
-  - Acesse https://github.com/elc117/demo-scotty-codespace-2026a
-  - Clique no botão Code -> aba Codespaces -> Create codespace on main
-  - Aguarde a criação... (leva algum tempo)
+  - [Dockerfile](./Dockerfile): contém comandos para configurar um container (semelhante a uma máquina virtual) com Haskell instalado, instalar biblioteas e compilar o código do exemplo com SQLite 
+  - [render.yaml](./render.yaml): configurações da plataforma Render para executar o Dockerfile
 
 
-### Instalação
+### Passos para deploy
 
-Instalação de dependências localmente ou no Codespaces, sem criação de projeto:
+1. Acesse [render.com](https://render.com) e faça login
+2. Clique em **New +** e escolha **Blueprint**
+3. Conecte sua conta do GitHub ao Render, se necessário
+4. Selecione o repositório `elc117/demo-scotty-codespace-2026a`
+5. Confirme a criação do serviço a partir do arquivo `render.yaml` já presente no repositório. Ele já define um serviço web Docker com health check em `/healthz` 
+6. Aguarde o build e o deploy inicial (tenha paciência, é demorado)
+7. Ao final, abra a URL pública gerada pelo Render
 
-```
-cabal update
-cabal install --lib scotty wai-extra random text
-cabal install --lib aeson sqlite-simple http-types warp
-```
-
-Observações:
-
-- No Codespaces, essas dependências podem ser adicionadas em [.devcontainer/devcontainer.json](.devcontainer/devcontainer.json), mas isso aumentaria o tempo de criação do container
-- Opcional para futuros projetos: usar a ferramenta Stack para criar um projeto que descreve as dependências
-
-  - Para manter os códigos de exemplo "minimalistas", não foi criado um arquivo de projeto (basta o arquivo .hs e as dependências acima instaladas)
-
-  - Criar um projeto não é obrigatório para executar os códigos de exemplo (localmente ou Codespaces).
-
-
-### Compilação e execução
-
-
-Execução do primeiro exemplo, como script:
-
-```
-cd src/01-scotty-hello/
-runhaskell helloScotty.hs
-```
-
-Opcional, com geração de executável:
-
-```
-ghc -threaded -o mywebapp helloScotty.hs
-./mywebapp
-```
-
+> O `render.yaml` está configurado para deploy automático a cada commit novo no repositório!
 
 
 ### Teste
 
-- Para testar cada exemplo, vai ser preciso fazer requisições web para as rotas 
-- Todos exemplos aceitam requisições GET (leitura), que podem ser enviadas pelo navegador na URL
-- O exemplo com SQLite também aceita POST (escrita), que precisa de parâmetros
-- No Codespaces, é possível expor o serviço (escolher modo Public) com uma URL externa e acessá-lo pelo computador local
+- Para testar o deploy no Render, é preciso fazer requisições web para as rotas 
 
+- O exemplo com SQLite aceita requisições GET (leitura) e POST (escrita)
 
-#### Codespaces
+- Requisições GET podem ser enviadas pelo navegador na própria URL: https://demo-scotty-codespace-2026a.onrender.com/healthz
 
-- Certifique-se de que o programa com Scotty esteja rodando antes de fazer uma requisição (verifique os logs no terminal)
-
-- Para requisições GET, clique em "Open in Browser" no popup que aparece quando o programa é executado
-
-  - Opção: Clique no menu PORTS e clique na URL mostrada em Forwarded Address
-  - Depois de abrir o navegador, digite a rota no final da URL 
-
-- Para controlar melhor as requisições, use o comando `curl` no terminal (abra um segundo terminal, pois o primeiro estará dedicado a executar e mostrar os logs do servidor)
-
-- Exemplos de requisições (conforme o exemplo correspondente):
-
-  - Exemplo: Hello
-    ``` bash
-    curl http://localhost:3000/hello
-    ```
-  - Exemplo: SQLite
-    ```
-    curl http://localhost:3000/users \
-        -H "Content-Type: application/json" \
-        -d '{"name":"Fulano","email":"fulano@email.com"}'
-    ```
-
-- No exemplo com SQLite, há scripts bash que chamam curl com parâmetros de exemplo (assim você não precisa copiar e colar)
-
-  ```bash
-  bash test-get-users.sh
-  bash test-post-user.sh
-  ```
-
-- Caso queira enviar requisições a partir do computador local, configure a visibilidade da porta para Public (PORTS -> Visibility). Isso permitirá acessar o serviço via uma URL na forma `https://<nome-gerado-pelo-github>-3000.app.github.dev/users`, como no exemplo abaixo:
+- Requisições POST precisam de parâmetros e devem ser enviadas por algum programa, por exemplo `curl`
 
   ```
-   curl https://effective-journey-5vvrvjp95hp4p5-3000.app.github.dev/users
+  curl http://https://demo-scotty-codespace-2026a.onrender.com/users \
+      -H "Content-Type: application/json" \
+      -d '{"name":"Fulano","email":"fulano@email.com"}'
   ```
 
-
-#### Localmente
-
-- Opção 1: Abra um navegador e copie/cole a URL: `http://localhost:3000/hello`
-
-- Opção 2: Use o programa `curl` no terminal: 
-
-  ``` bash
-  curl http://localhost:3000/advice
-  ```
 
 
 

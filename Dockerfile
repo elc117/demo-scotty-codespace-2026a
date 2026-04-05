@@ -9,10 +9,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY . .
 
-WORKDIR /app/src/05-scotty-sqlite
+WORKDIR /app/src/06-scotty-sqlite
 
 RUN cabal update && \
     cabal build && \
-    cp "$(cabal list-bin demo05-scotty-sqlite)" /usr/local/bin/demo05-scotty-sqlite
+    cp "$(cabal list-bin demo-scotty-sqlite)" /usr/local/bin/demo-scotty-sqlite
 
-CMD ["demo05-scotty-sqlite"]
+CMD ["demo-scotty-sqlite"]
