@@ -79,9 +79,12 @@ main = scotty 3000 $ do
 
   - O trecho `get "/hello"` define uma rota: quando o cliente acessa `/hello`, o servidor responde com um texto.
   - Cada rota é como um caso de "pattern matching" para diferentes caminhos da URL.
-  - O código é declarativo: descrevemos o que acontece em cada rota, sem precisar gerenciar detalhes de comunicação (sockets ou protocolos HTTP).
+  - O código é **declarativo**: descrevemos o que acontece em cada rota, sem precisar gerenciar detalhes de comunicação (sockets ou protocolos HTTP).
 - Importante: diretiva `{-# LANGUAGE OverloadedStrings #-}` permite trabalhar com diferentes representações de strings (como o tipo Text, usado pelo Scotty), sem chamar funções de conversão
 - Opcional: a linha `middleware logStdoutDev` é opcional e insere um "middleware" que executa antes/depois de cada requisição, neste caso registrando logs.
+- Para saber mais sobre comunicação cliente-servidor web, veja:
+  - [Overview of HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview)
+  - [HTTP Methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods)
 
 
 
@@ -119,7 +122,8 @@ main = scotty 3000 $ do
 
 ### Codespaces
 
-- Todos os códigos deste repositório são executáveis no Codespaces!
+> Todos os códigos deste repositório são executáveis no Codespaces!
+
 - Para isso:
 
   - Faça login no GitHub
@@ -141,11 +145,13 @@ cabal install --lib aeson sqlite-simple http-types warp
 Observações:
 
 - No Codespaces, essas dependências podem ser adicionadas em [.devcontainer/devcontainer.json](.devcontainer/devcontainer.json), mas isso aumentaria o tempo de criação do container
-- Opcional para futuros projetos: usar a ferramenta Stack para criar um projeto que descreve as dependências
+- Opcional para futuros projetos: usar ferramentas Cabal/Stack para criar um projeto que descreve as dependências
 
   - Para manter os códigos de exemplo "minimalistas", não foi criado um arquivo de projeto (basta o arquivo .hs e as dependências acima instaladas)
 
-  - Criar um projeto não é obrigatório para executar os códigos de exemplo (localmente ou Codespaces).
+  - Criar um projeto não é obrigatório para executar os códigos de exemplo (localmente ou Codespaces)
+
+  - O último exemplo, mais adiante, tem um projeto configurado
 
 
 ### Compilação e execução
@@ -537,12 +543,12 @@ main = do
 1. Acesse [render.com](https://render.com) e faça login
 2. Clique em **New +** e escolha **Blueprint**
 3. Conecte sua conta do GitHub ao Render, se necessário
-4. Selecione o repositório `elc117/demo-scotty-codespace-2026a`
-5. Confirme a criação do serviço a partir do arquivo `render.yaml` já presente no repositório. Ele já define um serviço web Docker com health check em `/healthz` 
+4. Em `Public Git Repository`, digite `https://github.com/elc117/demo-scotty-codespace-2026a`
+5. Confirme a criação do serviço a partir do arquivo `render.yaml` já presente no repositório. Ele usa o Dockerfile do repositório para instalar dependências e compilar o serviço criado com Scotty
 6. Aguarde o build e o deploy inicial (tenha paciência, é demorado)
 7. Ao final, abra a URL pública gerada pelo Render
 
-> O `render.yaml` está configurado para deploy automático a cada commit novo no repositório!
+> O `render.yaml` está configurado para deploy automático a cada commit novo no repositório! **Desligue** isso (`off`) se for fazer muitos commits!
 
 
 ### Teste
@@ -568,3 +574,4 @@ main = do
 
 - [Build a Haskell Server with Scotty framework](https://www.youtube.com/watch?v=psTTKGj9G6Y)
 - [Overview of HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview)
+- [HTTP Methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods)
